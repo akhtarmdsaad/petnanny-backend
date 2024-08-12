@@ -41,6 +41,9 @@ class Service(models.Model):
     
 class Request(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    service = models.CharField(max_length=100, default="Dog Trainer")
+    data = models.JSONField()
+
     # status = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -60,6 +63,7 @@ class ImageUpload(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     purpose = models.CharField(max_length=100, choices= image_purpose_choices)
     image = models.ImageField(null=True, blank=True, upload_to='images/')
+    description = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -79,16 +83,16 @@ status_choices = (
     ('Rejected', 'Rejected'),
 )
 
-class ShortRequest(Request):
-    service = models.IntegerField(choices=service_choices)
-    start_date = models.DateField()
-    duration = models.IntegerField()        # in no of days 
-    location = models.CharField(max_length=100)
-    status = models.CharField(max_length=100, choices=status_choices, default='Pending')
+# class ShortRequest(models.Model):
+#     service = models.IntegerField(choices=service_choices)
+#     start_date = models.DateField()
+#     duration = models.IntegerField()        # in no of days 
+#     location = models.CharField(max_length=100)
+#     status = models.CharField(max_length=100, choices=status_choices, default='Pending')
 
 
-    def __str__(self):
-        return self.user.user.username + ' - ' + self.location
+#     def __str__(self):
+#         return self.user.user.username + ' - ' + self.location
 
 class PetSitterRequest(Request):
     no_of_pets = models.IntegerField()
@@ -129,11 +133,10 @@ class BackerImages(models.Model):
         return self.backer.user.user.username
 
 class Backer(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     profile_pic = models.ImageField(null=True, blank=True, upload_to='profile_pics/')
-    bio = models.TextField()
-    experience = models.TextField()
-    skills = models.TextField()
+    details = models.JSONField(blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
 
     def __str__(self):
@@ -207,7 +210,6 @@ class Message(models.Model):
 
 #     def __str__(self):
 #         return self.booking.pet.name + ' - ' + self.booking.service.name
-    
 
-
-    
+class Test(models.Model):
+    name=models.CharField(max_length=100)

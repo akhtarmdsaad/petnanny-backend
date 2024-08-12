@@ -31,6 +31,7 @@ class BackerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Backer
         fields = '__all__'
+        read_only_fields = ['user']
 
 
 class AvailabilitySerializer(serializers.ModelSerializer):
@@ -63,14 +64,14 @@ class BackerImagesSerializer(serializers.ModelSerializer):
         model = BackerImages
         fields = '__all__'
 
-class ShortRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShortRequest
-        fields = '__all__'
-        read_only_fields = ['user']
-
 class ImageUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageUpload
+        fields = '__all__'
+        read_only_fields = ['user']
+
+class RequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Request
         fields = '__all__'
         read_only_fields = ['user']

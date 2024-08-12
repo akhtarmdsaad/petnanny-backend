@@ -35,12 +35,31 @@ def show_requests(request):
 
 @api_view(['GET'])
 def get_all_images_for_user(request, purpose):
+    params = request.query_params 
+        
     custom_user = models.CustomUser.objects.get(user=request.user)
     valid_values = [i[0] for i in models.image_purpose_choices]
     if purpose not in valid_values:
         print(purpose)
         return Response({'error': 'Invalid purpose'})
-    images = models.ImageUpload.objects.filter(user=custom_user, purpose=purpose)
+    if params.get('description'):
+        description = params.get('description')
+        images = models.ImageUpload.objects.filter(user=custom_user, purpose=purpose, description=description)
+    else:
+        images = models.ImageUpload.objects.filter(user=custom_user, purpose=purpose)
     data = serializers.ImageUploadSerializer(images, many=True)
     
     return Response({'images': data.data})
+
+@api_view(['GET'])
+def is_backer(request):
+    user = models.CustomUser.objects.get(user=request.user)
+    print(user)
+    # check Backer model 
+    user_is_backer = models.Backer.objects.filter(user=user).exists()
+    print(models.Backer.objects.filter(user=user))
+    print(user_is_backer)
+    # input("Enter to coninue")
+    if user_is_backer:
+        return Response({'is_backer': True})
+    return Response({'is_backer': False})

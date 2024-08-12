@@ -17,7 +17,8 @@ router.register(r'payments', views.PaymentViewSet)
 router.register(r'messages', views.MessageViewSet)
 router.register(r'messagedatas', views.MessageDataViewSet)
 router.register(r'users', views.UserViewSet)
-router.register(r'shortrequests', views.ShortRequestViewSet)
+# router.register(r'shortrequests', views.ShortRequestViewSet)
+router.register(r'requests', views.RequestViewSet)
 router.register(r'imageupload', views.ImageUploadViewSet)
 
 
@@ -27,5 +28,6 @@ urlpatterns = [
     path('user-signup/', my_api_views.user_signup, name='user-signup'),
     path('requests/', my_api_views.show_requests, name='show-requests'),
     path('images/<str:purpose>/', my_api_views.get_all_images_for_user, name='get-all-images-for-user'),
+    path('is-backer/', my_api_views.is_backer, name='is-backer'),
 ]
 
