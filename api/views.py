@@ -99,6 +99,11 @@ class RequestViewSet(viewsets.ModelViewSet):
     #     user = self.request.user
     #     return Request.objects.filter(user=user)
 
+    def get_queryset(self):
+        user = self.request.user
+        custom_user = CustomUser.objects.get(user=user)
+        return Request.objects.filter(user=custom_user)
+
     def perform_create(self, serializer):
         # check if user parameter is given in the request
 

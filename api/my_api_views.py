@@ -53,6 +53,8 @@ def get_all_images_for_user(request, purpose):
 
 @api_view(['GET'])
 def is_backer(request):
+    if request.user.is_anonymous:
+        return Response({'is_backer': False})
     user = models.CustomUser.objects.get(user=request.user)
     print(user)
     # check Backer model 
