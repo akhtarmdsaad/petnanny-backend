@@ -29,5 +29,7 @@ urlpatterns = [
     path('requests/', my_api_views.show_requests, name='show-requests'),
     path('images/<str:purpose>/', my_api_views.get_all_images_for_user, name='get-all-images-for-user'),
     path('is-backer/', my_api_views.is_backer, name='is-backer'),
+    path('jobs-near-me/', my_api_views.jobs_near_me, name='jobs-near-me'),
+    path('request-detail-to-backer/<int:request_id>/', my_api_views.get_request_details_for_backer, name='request-detail-to-backer'),
 ]
 
