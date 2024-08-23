@@ -40,7 +40,6 @@ def get_all_images_for_user(request, purpose):
     custom_user = models.CustomUser.objects.get(user=request.user)
     valid_values = [i[0] for i in models.image_purpose_choices]
     if purpose not in valid_values:
-        print(purpose)
         return Response({'error': 'Invalid purpose'})
     if params.get('description'):
         description = params.get('description')
@@ -56,12 +55,8 @@ def is_backer(request):
     if request.user.is_anonymous:
         return Response({'is_backer': False})
     user = models.CustomUser.objects.get(user=request.user)
-    print(user)
     # check Backer model 
     user_is_backer = models.Backer.objects.filter(user=user).exists()
-    print(models.Backer.objects.filter(user=user))
-    print(user_is_backer)
-    # input("Enter to coninue")
     if user_is_backer:
         return Response({'is_backer': True})
     return Response({'is_backer': False})
@@ -79,5 +74,25 @@ def show_requests_to_user(request):
         'pettraining_requests': serializers.PetTrainingRequestSerializer(pettraining_requests, many=True).data,
         'dogwalking_requests': serializers.DogWalkingRequestSerializer(dogwalking_requests, many=True).data,
     }
+
+    return Response(data)
+
+@api_view(['GET'])
+def jobs_near_me(request):
+    user = models.CustomUser.objects.get(user=request.user)
+    try:
+        backer = models.Backer.objects.get(user=user)
+    except models.Backer.DoesNotExist:
+        return Response({'error': 'User is not a backer'})
+    location = backer.preferred_location
+    petboarding_requests = models.PetBoardingRequest.objects.filter(location=location)
+    pettraining_requests = models.PetTrainingRequest.objects.filter(location=location)
+    dogwalking_requests = models.DogWalkingRequest.objects.filter(location=location)
+
+    data = {
+        'petboarding_requests': serializers.PetBoardingRequestSerializer(petboarding_requests, many=True).data,
+        'pettraining_requests': serializers.PetTrainingRequestSerializer(pettraining_requests, many=True).data,
+        'dogwalking_requests': serializers.DogWalkingRequestSerializer(dogwalking_requests, many=True).data,
+    }  
 
     return Response(data)

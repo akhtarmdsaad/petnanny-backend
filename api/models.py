@@ -171,12 +171,38 @@ class BackerImages(models.Model):
 class Backer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     profile_pic = models.ImageField(null=True, blank=True, upload_to='profile_pics/')
-    details = models.JSONField(blank=True, null=True)
+    about_me = models.TextField(null=True)
+    pet_experience = models.TextField(null=True)
+    skills = models.CharField(max_length=255,null=True)  # Consider using a ListField if multiple skills are commo,null=Truen
+    other_skills = models.TextField(null=True)
+    service_name = models.CharField(max_length=100,null=True)
+    listing_summary = models.TextField(null=True)
+    max_pets = models.PositiveIntegerField(null=True)
+    pets_accepted = models.CharField(max_length=255,null=True)  # Consider using a ListField
+    pet_size = models.CharField(max_length=255,null=True)  # Consider using a ListField
+    adult_supervision = models.CharField(max_length=100,null=True)
+    unsupervised_location = models.CharField(max_length=100,null=True)
+    nighttime_location = models.CharField(max_length=100,null=True)
+    potty_breaks = models.PositiveIntegerField(null=True)
+    home_type = models.CharField(max_length=100,null=True)
+    outdoor_area_size = models.CharField(max_length=100,null=True)
+    transport_emergencies = models.BooleanField(null=True)
+    last_minute_bookings = models.BooleanField(null=True)
+    preferred_location = models.CharField(max_length=100, default="Delhi")
+    service_type = models.CharField(max_length=100,null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    additional_description = models.TextField(null=True)
+    apartment_house_number = models.CharField(max_length=50,null=True)
+    street_name = models.CharField(max_length=100,null=True)
+    city = models.CharField(max_length=100,null=True)
+    zip_code = models.CharField(max_length=20,null=True)
+    country = models.CharField(max_length=100,null=True)
+    state = models.CharField(max_length=100,null=True)
     is_verified = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return self.user.user.username
+        return self.user.user.username 
   
 class Availability(models.Model):
     backer = models.ForeignKey(Backer, on_delete=models.CASCADE)

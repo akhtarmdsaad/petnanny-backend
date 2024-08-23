@@ -33,5 +33,6 @@ urlpatterns = [
     path('images/<str:purpose>/', my_api_views.get_all_images_for_user, name='get-all-images-for-user'),
     path('is-backer/', my_api_views.is_backer, name='is-backer'),
     path('requests/', my_api_views.show_requests_to_user, name='show-requests-to-user'),
+    path('jobs-near-me/', my_api_views.jobs_near_me, name='jobs-near-me'),
 ]
 

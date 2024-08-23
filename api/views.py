@@ -1,5 +1,6 @@
 import datetime
 from django.shortcuts import render
+from django.db.models import Q
 from .models import *
 from rest_framework import viewsets 
 from .serializers import *
@@ -54,10 +55,7 @@ class BackerViewSet(viewsets.ModelViewSet):
     
 
     def perform_create(self, serializer):
-        # check if user parameter is given in the request
-
         user = CustomUser.objects.get(user=self.request.user)
-        print(user)
         serializer.save(user=user)
 
 class AvailabilityViewSet(viewsets.ModelViewSet):
@@ -97,7 +95,27 @@ class PetBoardingRequestViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         custom_user = CustomUser.objects.get(user=user)
-        return PetBoardingRequest.objects.filter(user=custom_user)
+        is_backer = Backer.objects.filter(user=custom_user).exists()
+        if is_backer:
+            pref_location = Backer.objects.get(user=custom_user).preferred_location
+            return PetBoardingRequest.objects.filter(location=pref_location)
+        else:
+            return PetBoardingRequest.objects.filter(user=custom_user)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = PetBoardingRequest.objects.get(pk=kwargs['pk'])
+            user = request.user
+            custom_user = CustomUser.objects.get(user=user)
+            is_backer = Backer.objects.filter(user=custom_user).exists()
+            
+            if instance.user == custom_user or is_backer:
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
+            else:
+                return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        except PetBoardingRequest.DoesNotExist:
+            return Response({'error': 'PetBoardingRequest not found'}, status=status.HTTP_404_NOT_FOUND)
 
     def perform_create(self, serializer):
         user = CustomUser.objects.get(user=self.request.user)
@@ -111,11 +129,30 @@ class PetTrainingRequestViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         custom_user = CustomUser.objects.get(user=user)
-        return PetTrainingRequest.objects.filter(user=custom_user)
+        is_backer = Backer.objects.filter(user=custom_user).exists()
+        if is_backer:
+            return PetTrainingRequest.objects.all()
+        else:
+            return PetTrainingRequest.objects.filter(user=custom_user)
 
     def perform_create(self, serializer):
         user = CustomUser.objects.get(user=self.request.user)
         serializer.save(user=user)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = PetTrainingRequest.objects.get(pk=kwargs['pk'])
+            user = request.user
+            custom_user = CustomUser.objects.get(user=user)
+            is_backer = Backer.objects.filter(user=custom_user).exists()
+            
+            if instance.user == custom_user or is_backer:
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
+            else:
+                return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        except PetTrainingRequest.DoesNotExist:
+            return Response({'error': 'PetTrainingRequest not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class DogWalkingRequestViewSet(viewsets.ModelViewSet):
     queryset = DogWalkingRequest.objects.all()
@@ -125,11 +162,29 @@ class DogWalkingRequestViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         custom_user = CustomUser.objects.get(user=user)
-        return DogWalkingRequest.objects.filter(user=custom_user)
+        is_backer = Backer.objects.filter(user=custom_user).exists()
+        
+        if is_backer:
+            return DogWalkingRequest.objects.all()
+        else:
+            return DogWalkingRequest.objects.filter(user=custom_user)
+
 
     def perform_create(self, serializer):
         user = CustomUser.objects.get(user=self.request.user)
         serializer.save(user=user)
+    
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = request.user
+        custom_user = CustomUser.objects.get(user=user)
+        is_backer = Backer.objects.filter(user=custom_user).exists()
+
+        if instance.user == custom_user or is_backer:
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Unauthorized'}, status=401)
 
 
 class ImageUploadViewSet(viewsets.ModelViewSet):
