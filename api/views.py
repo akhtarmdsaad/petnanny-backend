@@ -89,27 +89,48 @@ class UserViewSet(viewsets.ModelViewSet):
 #         user = CustomUser.objects.get(user=self.request.user)
 #         serializer.save(user=user)
 
-class RequestViewSet(viewsets.ModelViewSet):
-    queryset = Request.objects.all()
-    serializer_class = RequestSerializer
+class PetBoardingRequestViewSet(viewsets.ModelViewSet):
+    queryset = PetBoardingRequest.objects.all()
+    serializer_class = PetBoardingRequestSerializer
     permission_classes = [IsAuthenticated]
-
-    # allow for filtering based on user
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     return Request.objects.filter(user=user)
 
     def get_queryset(self):
         user = self.request.user
         custom_user = CustomUser.objects.get(user=user)
-        return Request.objects.filter(user=custom_user)
+        return PetBoardingRequest.objects.filter(user=custom_user)
 
     def perform_create(self, serializer):
-        # check if user parameter is given in the request
-
         user = CustomUser.objects.get(user=self.request.user)
-        print(user)
         serializer.save(user=user)
+
+class PetTrainingRequestViewSet(viewsets.ModelViewSet):
+    queryset = PetTrainingRequest.objects.all()
+    serializer_class = PetTrainingRequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        custom_user = CustomUser.objects.get(user=user)
+        return PetTrainingRequest.objects.filter(user=custom_user)
+
+    def perform_create(self, serializer):
+        user = CustomUser.objects.get(user=self.request.user)
+        serializer.save(user=user)
+
+class DogWalkingRequestViewSet(viewsets.ModelViewSet):
+    queryset = DogWalkingRequest.objects.all()
+    serializer_class = DogWalkingRequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        custom_user = CustomUser.objects.get(user=user)
+        return DogWalkingRequest.objects.filter(user=custom_user)
+
+    def perform_create(self, serializer):
+        user = CustomUser.objects.get(user=self.request.user)
+        serializer.save(user=user)
+
 
 class ImageUploadViewSet(viewsets.ModelViewSet):
     queryset = ImageUpload.objects.all()

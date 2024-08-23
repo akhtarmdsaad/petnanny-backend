@@ -70,8 +70,21 @@ class ImageUploadSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
 
-class RequestSerializer(serializers.ModelSerializer):
+
+class PetBoardingRequestSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Request
+        model = PetBoardingRequest
+        fields = '__all__'
+        read_only_fields = ['user']
+
+class PetTrainingRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PetTrainingRequest
+        fields = '__all__'
+        read_only_fields = ['user']
+
+class DogWalkingRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DogWalkingRequest
         fields = '__all__'
         read_only_fields = ['user']

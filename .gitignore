@@ -3,3 +3,4 @@ migrations/
 __pycache__/
 media/
 script_reset*.py 
+saad_*

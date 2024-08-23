@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -39,17 +40,62 @@ class Service(models.Model):
     def __str__(self):
         return self.name
     
-class Request(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    service = models.CharField(max_length=100, default="Dog Trainer")
-    data = models.JSONField()
 
-    # status = models.CharField(max_length=100, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class PetBoardingRequest(models.Model):
+    service = models.CharField(max_length=50, default='Pet Boarding')
+    num_pets = models.PositiveIntegerField()
+    pet_type = models.TextField()
+    pet_breed = models.CharField(max_length=50, blank=True, null=True)
+    pet_size = models.TextField()
+    additional_notes = models.TextField(blank=True, null=True)
+    start_date = models.DateTimeField()
+    num_nights = models.PositiveIntegerField()
+    location = models.CharField(max_length=100)
+    pickup_required = models.BooleanField(default=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True)
 
     def __str__(self):
-        return self.user.user.username
+        return self.user.user.username + ' - ' + self.location
+
+
+class DogWalkingRequest(models.Model):
+    service = models.CharField(max_length=50, default='Dog Walking')
+    num_dogs = models.PositiveIntegerField()
+    dog_breed = models.CharField(max_length=50)
+    dog_size = models.TextField()
+    additional_notes = models.TextField(blank=True, null=True)
+    walks_per_day = models.PositiveIntegerField()
+    num_days = models.PositiveIntegerField()
+    start_date = models.DateTimeField(auto_now=True)
+    location = models.CharField(max_length=100)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True)
+
+    def __str__(self):
+        return self.user.user.username + ' - ' + self.location
+
+class PetTrainingRequest(models.Model):
+    service = models.CharField(max_length=50, default='Pet Training')
+    num_pets = models.PositiveIntegerField()
+    pet_type = models.TextField()
+    pet_breed = models.CharField(max_length=50)
+    pet_size = models.TextField()
+    pet_age = models.TextField()
+    course = models.TextField()
+    training_type = models.CharField(max_length=50)
+    additional_notes = models.TextField(blank=True, null=True)
+    available_sessions = models.CharField(max_length=255)
+    start_date = models.DateTimeField()
+    location = models.CharField(max_length=100)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    updated_at = models.DateTimeField(auto_now=True,null=True)
+
+    def __str__(self):
+        return self.user.user.username + ' - ' + self.location
 
 image_purpose_choices = (
     ('Profile', 'Profile'),
@@ -94,16 +140,6 @@ status_choices = (
 #     def __str__(self):
 #         return self.user.user.username + ' - ' + self.location
 
-class PetSitterRequest(Request):
-    no_of_pets = models.IntegerField()
-    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
-    visit_times_per_day = models.IntegerField() 
-    start_date = models.DateField()     
-    duration = models.IntegerField()        # in no of days
-    location = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.pet.name + ' - ' + self.location
 
 class Booking(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
