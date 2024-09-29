@@ -3,6 +3,7 @@ from rest_framework import routers # type: ignore
 from . import views 
 from . import my_api_views 
 from ecommerce import views as ecommerce_views
+from ecommerce import my_api_views as ecommerce_my_api_views
 
 
 router = routers.DefaultRouter()
@@ -62,3 +63,8 @@ urlpatterns = [
     path('jobs-near-me/', my_api_views.jobs_near_me, name='jobs-near-me'),
 ]
 
+# ecommerce urls
+urlpatterns += [
+    path('get-products-by-category/<str:category>/', ecommerce_my_api_views.get_products_by_category, name='get-products-by-category'),
+    path('get-product-by-id/<int:id>/', ecommerce_my_api_views.get_product_by_id, name='get-product-by-id'),
+]
