@@ -200,7 +200,7 @@ class WishlistItem(models.Model):
     def __str__(self):
         return self.product
 
-class Review(models.Model):
+class EcommerceReview(models.Model):
 
     """
     Purpose: To collect customer feedback on products, helping potential buyers make informed decisions.
@@ -363,3 +363,51 @@ class StockAlert(models.Model):
             self.save()
             return True
         return False
+
+class Cart(models.Model):
+    customer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.customer.user.username
+    
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.product.name + ' ' + str(self.quantity)
+
+payment_method_choices = [
+    ('cash', 'Cash'),
+    ('card', 'Card')
+]
+class EcommercePayment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method = models.CharField(max_length=255, choices=payment_method_choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.order.customer.user.username + ' ' + str(self.amount)
+
+
+class Address(models.Model):
+    customer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    address = models.TextField()
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    zip = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.customer.user.username + ' ' + self.address + ' ' + self.city + ' ' + self.state + ' ' + self.country + ' ' + self.zip
