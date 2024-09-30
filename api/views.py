@@ -7,6 +7,7 @@ from .serializers import *
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 
 import os
 import shutil
@@ -50,6 +51,7 @@ class BackerViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        
         custom_user = CustomUser.objects.get(user=user)
         return Backer.objects.filter(user=custom_user)
     
@@ -90,22 +92,29 @@ class UserViewSet(viewsets.ModelViewSet):
 class PetBoardingRequestViewSet(viewsets.ModelViewSet):
     queryset = PetBoardingRequest.objects.all()
     serializer_class = PetBoardingRequestSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
+        if not user.id:
+            return PetBoardingRequest.objects.all()
         custom_user = CustomUser.objects.get(user=user)
         is_backer = Backer.objects.filter(user=custom_user).exists()
         if is_backer:
             pref_location = Backer.objects.get(user=custom_user).preferred_location
             return PetBoardingRequest.objects.filter(location=pref_location)
+        elif custom_user:
+            return PetBoardingRequest.objects.filter(user=custom_user.id)
         else:
-            return PetBoardingRequest.objects.filter(user=custom_user)
+            return PetBoardingRequest.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = PetBoardingRequest.objects.get(pk=kwargs['pk'])
             user = request.user
+            if not user.id:
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
             custom_user = CustomUser.objects.get(user=user)
             is_backer = Backer.objects.filter(user=custom_user).exists()
             

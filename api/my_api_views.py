@@ -64,9 +64,9 @@ def is_backer(request):
 @api_view(['GET'])
 def show_requests_to_user(request):
     user = models.CustomUser.objects.get(user=request.user)
-    petboarding_requests = models.PetBoardingRequest.objects.filter(user=user)
-    pettraining_requests = models.PetTrainingRequest.objects.filter(user=user)
-    dogwalking_requests = models.DogWalkingRequest.objects.filter(user=user)
+    petboarding_requests = models.PetBoardingRequest.objects.filter(user=user).order_by('-created_at')
+    pettraining_requests = models.PetTrainingRequest.objects.filter(user=user).order_by('-created_at')
+    dogwalking_requests = models.DogWalkingRequest.objects.filter(user=user).order_by('-created_at')
     
 
     data = {

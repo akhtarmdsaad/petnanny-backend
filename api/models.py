@@ -29,7 +29,14 @@ class Pet(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+STATUS_CHOICES = (
+    ('Pending', 'Pending'),
+    ('Accepted', 'Accepted'),
+    ('Rejected', 'Rejected'),
+    ('Completed', 'Completed'),
+)    
+
 class Service(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -53,6 +60,7 @@ class PetBoardingRequest(models.Model):
     location = models.CharField(max_length=100)
     pickup_required = models.BooleanField(default=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)
 
@@ -70,6 +78,7 @@ class DogWalkingRequest(models.Model):
     num_days = models.PositiveIntegerField()
     start_date = models.DateTimeField(auto_now=True)
     location = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)
@@ -90,6 +99,7 @@ class PetTrainingRequest(models.Model):
     available_sessions = models.CharField(max_length=255)
     start_date = models.DateTimeField()
     location = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True,null=True)
     updated_at = models.DateTimeField(auto_now=True,null=True)
