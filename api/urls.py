@@ -25,6 +25,7 @@ router.register(r'dogwalking_requests', views.DogWalkingRequestViewSet)
 router.register(r'pettraining_requests', views.PetTrainingRequestViewSet)
 router.register(r'petboarding_requests', views.PetBoardingRequestViewSet)
 router.register(r'imageupload', views.ImageUploadViewSet)
+router.register(r'comments', views.CommentViewSet)
 
 # ecommerce views
 router.register(r'categories', ecommerce_views.CategoryViewSet)
@@ -61,6 +62,8 @@ urlpatterns = [
     path('is-backer/', my_api_views.is_backer, name='is-backer'),
     path('requests/', my_api_views.show_requests_to_user, name='show-requests-to-user'),
     path('jobs-near-me/', my_api_views.jobs_near_me, name='jobs-near-me'),
+    # path('comment-reply/<int:comment_id>/', my_api_views.add_comment_to_reply, name='add_comment_to_reply'),
+    path('get-comment-for-id/<int:request_id>/', my_api_views.comment_and_replies, name='comment-and-replies'),
 ]
 
 # ecommerce urls

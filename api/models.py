@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -37,6 +38,7 @@ STATUS_CHOICES = (
     ('Completed', 'Completed'),
 )    
 
+
 class Service(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -47,28 +49,34 @@ class Service(models.Model):
     def __str__(self):
         return self.name
     
+# making common request class 
+class Request(models.Model):
+    # service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    start_date = models.DateTimeField()
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-class PetBoardingRequest(models.Model):
+    def __str__(self):
+        return self.user.user.username + ' - ' + self.service.name
+
+class PetBoardingRequest(Request):
     service = models.CharField(max_length=50, default='Pet Boarding')
     num_pets = models.PositiveIntegerField()
     pet_type = models.TextField()
     pet_breed = models.CharField(max_length=50, blank=True, null=True)
     pet_size = models.TextField()
     additional_notes = models.TextField(blank=True, null=True)
-    start_date = models.DateTimeField()
     num_nights = models.PositiveIntegerField()
     location = models.CharField(max_length=100)
     pickup_required = models.BooleanField(default=False)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
-    created_at = models.DateTimeField(auto_now_add=True,null=True)
-    updated_at = models.DateTimeField(auto_now=True,null=True)
 
     def __str__(self):
         return self.user.user.username + ' - ' + self.location
 
 
-class DogWalkingRequest(models.Model):
+class DogWalkingRequest(Request):
     service = models.CharField(max_length=50, default='Dog Walking')
     num_dogs = models.PositiveIntegerField()
     dog_breed = models.CharField(max_length=50)
@@ -76,17 +84,12 @@ class DogWalkingRequest(models.Model):
     additional_notes = models.TextField(blank=True, null=True)
     walks_per_day = models.PositiveIntegerField()
     num_days = models.PositiveIntegerField()
-    start_date = models.DateTimeField(auto_now=True)
     location = models.CharField(max_length=100)
-    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    created_at = models.DateTimeField(auto_now_add=True,null=True)
-    updated_at = models.DateTimeField(auto_now=True,null=True)
 
     def __str__(self):
         return self.user.user.username + ' - ' + self.location
 
-class PetTrainingRequest(models.Model):
+class PetTrainingRequest(Request):
     service = models.CharField(max_length=50, default='Pet Training')
     num_pets = models.PositiveIntegerField()
     pet_type = models.TextField()
@@ -97,12 +100,7 @@ class PetTrainingRequest(models.Model):
     training_type = models.CharField(max_length=50)
     additional_notes = models.TextField(blank=True, null=True)
     available_sessions = models.CharField(max_length=255)
-    start_date = models.DateTimeField()
     location = models.CharField(max_length=100)
-    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default='Pending')
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    created_at = models.DateTimeField(auto_now_add=True,null=True)
-    updated_at = models.DateTimeField(auto_now=True,null=True)
 
     def __str__(self):
         return self.user.user.username + ' - ' + self.location
@@ -285,3 +283,14 @@ class Message(models.Model):
 
 class Test(models.Model):
     name=models.CharField(max_length=100)
+
+class Comment(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text = models.TextField()
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.user.username

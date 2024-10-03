@@ -207,3 +207,16 @@ class ImageUploadViewSet(viewsets.ModelViewSet):
         serializer.save(user=CustomUser.objects.get(user=request.user))
 
         return Response(serializer.data)
+    
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        user = CustomUser.objects.get(user=self.request.user)
+        serializer.save(user=user)
+        
+        
+        
+    

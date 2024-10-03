@@ -96,3 +96,20 @@ def jobs_near_me(request):
     }  
 
     return Response(data)
+
+@api_view(['GET'])
+def comment_and_replies(request, request_id):
+    print("[comment and replies]",request_id)
+    try:
+        comments = models.Comment.objects.filter(request_id=request_id, parent=None).order_by('-created_at')
+    except models.Comment.DoesNotExist:
+        return Response({'error': 'Comment for the Request not found, id:'+str(request_id)})
+    data = []
+    for comment in comments:
+        replies = models.Comment.objects.filter(parent=comment).order_by('created_at')
+        data.append({
+            'comment': serializers.CommentSerializer(comment).data,
+            'replies': serializers.CommentSerializer(replies, many=True).data
+        })
+    
+    return Response(data)

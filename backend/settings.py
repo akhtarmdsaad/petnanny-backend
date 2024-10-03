@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt',
-    'ecommerce'
+    'ecommerce',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [
@@ -138,10 +139,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # Replace with your ReactJS frontend URL
-    'https://your-production-domain.com',
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',  # Replace with your ReactJS frontend URL
+#     'https://your-production-domain.com',
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -154,3 +155,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
